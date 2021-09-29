@@ -12,7 +12,8 @@ rule4 = r"()"
 
 for item in data:
     new = item[1:]
-    if set(new[0]).issubset(vowels):
+    if new[0] in vowels:
+    #if set(new[0]).issubset(vowels):
         new1 = prefix + new[1:] 
     else:
         new1 = prefix + new
