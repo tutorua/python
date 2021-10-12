@@ -16,8 +16,8 @@ def fibonacci(number):
         for i in (range(number-1)):
             fib = prev + next
             prev = next
-            next = fib
+            next = fib 
     return fib
     
 for i in range(1,10):
-    print fibonacci(i)
+    print(fibonacci(i))
