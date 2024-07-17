@@ -3,7 +3,50 @@
 Created on Tue Sep 06 20:25:12 2016
 
 @author: Igor
+
+Python has 3 methods used for string formatting:
+- оператор %  
+- строковый метод format()  
+- f-строки
+
+For details see also https://pyformat.info/
 """
+name = 'James'
+surname = 'Bond'
+age = 64
+# operator % remained for compatibility and might look redundant
+print('My name is %s' % name)
+print('I am %d years old' % age)
+print('Numerical value for %s is %04.2f or %e' % ('Pi', 3.14, 3.14))
+print()
+
+# method format() might look redundant
+result = 'My name is {}, {} {}'.format(surname, name, surname)
+print(result)
+result = 'My name is {1}, {0} {1}'.format(name, surname)
+print(result)
+result = 'My name is {surname}, {0} {surname}'.format(name, surname='Bond')
+print(result)
+print()
+
+# the suggested modern way is called f-string (possibly like G-string)
+data = {'first': 'Hodor', 'last': 'Hodor!'}
+print('{first} {last}'.format(**data))
+result = f'My name is {surname}, {name.upper()} {surname.upper()}'
+print(result)
+print(f'My name is {"Bond"}, {"James"} {"Bond"}')
+print(f'{age}')
+print(f'{{age}}')
+print(f'{{{age}}}')
+print(f'{{{{age}}}}')
+print(f'{{{{{age}}}}}')
+print(f'\\a\\b\\f\\n\\r\\t\\v')
+print(fr'\a\b\f\n\r\t\v')
+# does not work works for Python <= 3.11
+#print(f'My name is {'Bond'}, {'James'} {'Bond'}')
+# print(f'{"\n".join(["James", "Bond"])}')
+print()
+
 
 hello = 'hello'   # String literals can use single quotes
 world = "world"   # or double quotes; it does not matter.
