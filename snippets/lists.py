@@ -5,9 +5,20 @@ print(L)
 
 # Output: ['Michael Jackson', 10.2, ['pop', 10]]
 
+Shopping_list = ["Milk", "Eggs", "Bread"]
+print(Shopping_list)
+print(len(Shopping_list))
+# Output: 3
 # To add an element:
 Shopping_list.append("Football")
-
+Shopping_list.insert(1, "Watermelon")
+Shopping_list[0], Shopping_list[-1] = Shopping_list[-1], Shopping_list[0]
+# Output: ['Football', 'Watermelon', 'Eggs', 'Bread', 'Milk']
+print(Shopping_list)
+print(Shopping_list.sort())
+# Output: ['Bread', 'Eggs', 'Football', 'Milk', 'Watermelon']
+print(Shopping_list.reverse())
+# Output: ['Watermelon', 'Milk', 'Football', 'Eggs', 'Bread']
 
 # Use extend to add elements to list
 L = [ "Michael Jackson", 10.2]

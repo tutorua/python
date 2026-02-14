@@ -1,0 +1,148 @@
+# E-commerce Data Validation Configuration
+
+static_thresholds:
+  price:
+    min: 0.01
+    max: 50000.00
+    max_decimals: 2
+  
+  title:
+    min_length: 3
+    max_length: 500
+    no_html: true
+    forbidden_chars: ['<', '>', '&lt;', '&gt;']
+    
+  date:
+    max_future_days: 30  # Allow up to 30 days in future for pre-orders
+    max_past_days: 3650  # Allow up to 10 years in past
+    
+  availability:
+    allowed_values:
+      - 'in_stock'
+      - 'out_of_stock'
+      - 'limited_stock'
+      - 'pre_order'
+      - 'discontinued'
+
+dynamic_thresholds:
+  price:
+    std_multiplier: 3  # Flag prices beyond 3 standard deviations
+    min_samples: 30    # Require at least 30 historical samples
+    lookback_days: 90  # Use last 90 days for calculations
+    
+  title:
+    length_std_multiplier: 2.5
+    vocabulary_threshold: 0.8  # Flag if >80% of words are new
+    
+  stock_quantity:
+    std_multiplier: 4  # Stock levels can be more volatile
+
+contextual_rules:
+  # Seasonal adjustments by month
+  seasonal:
+    # January - Post-holiday clearance
+    "1":
+      categories: ['electronics', 'clothing', 'toys']
+      price_adjustment_factor: 0.7  # Expect 30% lower prices
+      
+    # November - Black Friday sales
+    "11":
+      categories: ['electronics', 'clothing', 'home']
+      price_adjustment_factor: 0.6  # Expect 40% lower prices
+      
+    # December - Holiday premium
+    "12":
+      categories: ['toys', 'gifts', 'jewelry']
+      price_adjustment_factor: 1.2  # Expect 20% higher prices
+      
+  # Category-specific rules
+  category_rules:
+    electronics:
+      price_change_limit: 0.5  # Max 50% price change day-to-day
+      title_brand_required: true
+      expected_price_trend: 'decreasing'  # Tech prices generally decrease
+      
+    books:
+      price_change_limit: 0.2  # Max 20% price change
+      title_min_words: 2
+      price_stability_expected: true
+      
+    clothing:
+      price_change_limit: 0.7  # Max 70% price change (sales common)
+      seasonal_variation_expected: true
+      size_info_required: true
+      
+    luxury:
+      min_price: 100.00
+      price_increases_acceptable: true
+      brand_verification_required: true
+      
+  # Time-based rules
+  time_rules:
+    # Business hours - expect normal activity
+    business_hours:
+      start: 9
+      end: 17
+      timezone: 'UTC'
+      expected_update_frequency: 'high'
+      
+    # Weekend rules
+    weekend:
+      expected_update_frequency: 'low'
+      price_change_sensitivity: 'reduced'
+      
+  # External event rules
+  event_rules:
+    black_friday:
+      date_range: ['2024-11-29', '2024-12-02']
+      expected_discount_categories: ['electronics', 'clothing', 'home']
+      max_discount_percent: 80
+      
+    cyber_monday:
+      date_range: ['2024-12-02', '2024-12-02']
+      expected_discount_categories: ['electronics', 'software']
+      max_discount_percent: 70
+
+# Cross-validation rules
+cross_validation:
+  price_consistency:
+    # Check price against multiple sources if available
+    variance_threshold: 0.1  # Flag if prices vary by more than 10%
+    
+  availability_stock_consistency:
+    # Ensure availability matches stock levels
+    rules:
+      - if: "availability == 'out_of_stock'"
+        then: "stock_quantity == 0"
+      - if: "availability == 'limited_stock'"
+        then: "stock_quantity > 0 and stock_quantity <= 5"
+      - if: "availability == 'in_stock'"
+        then: "stock_quantity > 5"
+        
+  title_price_consistency:
+    # Check if luxury keywords match price ranges
+    luxury_keywords: ['premium', 'deluxe', 'professional', 'pro', 'elite']
+    luxury_min_price: 100.00
+
+# Notification settings
+notifications:
+  error_threshold: 5  # Send alert if more than 5 errors per batch
+  warning_threshold: 20  # Send warning if more than 20 warnings per batch
+  
+  email_alerts:
+    enabled: true
+    recipients: ['admin@example.com', 'data-team@example.com']
+    
+  critical_rules:
+    # These rules trigger immediate alerts
+    - 'negative_price'
+    - 'html_injection'
+    - 'future_date_extreme'
+
+# Logging configuration
+logging:
+  level: 'INFO'
+  file: 'validation.log'
+  include_passed: false  # Only log failures and warnings
+  detailed_errors: true
+  

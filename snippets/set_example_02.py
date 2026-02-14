@@ -38,3 +38,8 @@ print(frozen)
 # AttributeError: 'frozenset' object has no attribute 'add'
 # frozen.add('two')
 # print(frozen)
+
+set_a: set[int] = {1, 2, 3, 4, 5}
+set_b: set[int] = {4, 5, 6, 7, 8}
+print(set_a & set_b) # common elements - intersection
+print(set_a ^ set_b) # unique elements 

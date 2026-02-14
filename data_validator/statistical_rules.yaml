@@ -1,0 +1,241 @@
+# Statistical Validation Configuration for E-commerce Data
+
+statistical_fields:
+  price:
+    # Distribution shift detection
+    min_samples: 30
+    ks_threshold: 0.05  # Kolmogorov-Smirnov test p-value threshold
+    mannwhitney_threshold: 0.05  # Mann-Whitney U test p-value threshold
+    
+    # Outlier detection methods
+    z_score_detection: true
+    z_threshold: 3.0  # Standard deviations for z-score outliers
+    
+    iqr_detection: true
+    iqr_multiplier: 1.5  # IQR multiplier for outlier bounds
+    
+    isolation_forest: true
+    contamination: 0.1  # Expected proportion of outliers
+    
+    # Trend analysis
+    trend_detection: true
+    min_trend_samples: 20
+    trend_window: 7  # Rolling window for trend calculation
+    cusum_threshold: 2.0  # CUSUM threshold for trend breaks
+    
+    # Seasonal analysis
+    seasonal_detection: true
+    monthly_seasonality: true
+    weekly_seasonality: true
+    seasonal_z_threshold: 2.5
+    
+    # Data quality
+    valid_range: [0.01, 50000.0]
+    expected_precision: 2  # Decimal places
+    
+  stock_quantity:
+    min_samples: 20
+    ks_threshold: 0.05
+    
+    z_score_detection: true
+    z_threshold: 2.5  # More sensitive for stock levels
+    
+    iqr_detection: true
+    iqr_multiplier: 2.0  # Stock can be more variable
+    
+    isolation_forest: false  # Usually not needed for stock
+    
+    trend_detection: true
+    min_trend_samples: 15
+    trend_window: 5
+    cusum_threshold: 1.5  # More sensitive to stock changes
+    
+    seasonal_detection: true
+    monthly_seasonality: true
+    seasonal_z_threshold: 2.0
+    
+    valid_range: [0, 10000]
+    
+  title:
+    # Text-specific statistical analysis
+    min_samples: 10
+    
+    # Length distribution analysis
+    length_analysis: true
+    length_z_threshold: 2.5
+    
+    # Vocabulary analysis
+    vocabulary_analysis: true
+    vocabulary_threshold: 0.8  # Flag if >80% words are new
+    new_word_threshold: 0.2  # Flag if >20% completely new words
+    
+    # Format consistency
+    format_consistency: true
+    format_threshold: 0.9  # 90% should follow same format
+    
+    # Character distribution
+    character_analysis: true
+    special_char_threshold: 0.1  # Flag if >10% special chars
+    
+  availability:
+    # Categorical field analysis
+    min_samples: 10
+    
+    # Distribution analysis
+    category_distribution: true
+    rare_category_threshold: 0.05  # Flag categories <5% of total
+    
+    # Consistency analysis
+    consistency_check: true
+    expected_categories: 
+      - 'in_stock'
+      - 'out_of_stock'
+      - 'limited_stock'
+      - 'pre_order'
+      - 'discontinued'
+    
+    # Transition analysis (requires temporal data)
+    transition_analysis: true
+    suspicious_transitions:
+      - from: 'discontinued'
+        to: 'in_stock'
+      - from: 'out_of_stock'
+        to: 'limited_stock'
+        max_frequency: 0.1  # Should happen <10% of time
+
+# Advanced statistical methods
+advanced_methods:
+  # Multivariate analysis
+  multivariate_analysis:
+    enabled: true
+    fields: ['price', 'stock_quantity']
+    correlation_threshold: 0.8  # Flag unusual correlations
+    
+  # Time series analysis
+  time_series:
+    enabled: true
+    seasonality_detection: true
+    trend_detection: true
+    change_point_detection: true
+    
+    # ARIMA modeling for forecasting
+    arima_modeling: false  # Computationally expensive
+    
+  # Clustering analysis
+  clustering:
+    enabled: true
+    method: 'kmeans'
+    n_clusters: 5
+    outlier_threshold: 0.1  # Distance threshold for outliers
+    
+  # Anomaly detection ensemble
+  ensemble_methods:
+    enabled: true
+    methods:
+      - 'isolation_forest'
+      - 'local_outlier_factor'
+      - 'one_class_svm'
+    voting_threshold: 2  # Require 2/3 methods to agree
+
+# Quality metrics configuration
+quality_metrics:
+  completeness:
+    threshold: 0.95  # 95% completeness required
+    
+  uniqueness:
+    price: 0.8  # 80% unique prices expected
+    title: 0.9  # 90% unique titles expected
+    
+  consistency:
+    threshold: 0.9  # 90% format consistency required
+    
+  validity:
+    threshold: 0.95  # 95% valid values required
+    
+  accuracy:
+    threshold: 0.9  # 90% accuracy against baseline
+
+# Baseline calculation settings
+baseline_settings:
+  # How much historical data to use
+  lookback_days: 90
+  minimum_samples: 100
+  
+  # Update frequency
+  recalculate_frequency: 'weekly'
+  
+  # Seasonal adjustment
+  seasonal_adjustment: true
+  seasonal_periods: [7, 30, 365]  # Weekly, monthly, yearly
+  
+  # Trend adjustment
+  trend_adjustment: true
+  detrend_method: 'linear'
+
+# Alert thresholds
+alert_thresholds:
+  # Number of anomalies to trigger alerts
+  critical_anomaly_count: 10
+  warning_anomaly_count: 5
+  
+  # Anomaly scores to trigger alerts
+  critical_anomaly_score: 0.9
+  warning_anomaly_score: 0.7
+  
+  # Quality score thresholds
+  critical_quality_score: 0.8
+  warning_quality_score: 0.9
+  
+  # Distribution shift thresholds
+  critical_distribution_shift: 0.01  # p-value
+  warning_distribution_shift: 0.05
+
+# Performance settings
+performance:
+  # Parallel processing
+  parallel_processing: true
+  max_workers: 4
+  
+  # Memory management
+  chunk_size: 1000  # Process data in chunks
+  
+  # Caching
+  cache_baseline_stats: true
+  cache_duration: 3600  # 1 hour in seconds
+
+# Reporting settings
+reporting:
+  # Detail level
+  include_all_anomalies: true
+  include_quality_metrics: true
+  include_distribution_plots: false  # Can be memory intensive
+  
+  # Export formats
+  export_formats: ['json', 'csv']
+  
+  # Visualization
+  generate_plots: false
+  plot_formats: ['png', 'svg']
+
+# Integration settings
+integration:
+  # Database connections for historical data
+  database:
+    enabled: false
+    connection_string: ""
+    
+  # External APIs for validation
+  external_apis:
+    enabled: false
+    endpoints: []
+    
+  # Real-time processing
+  real_time:
+    enabled: false
+    stream_processing: false
+    
+  # Batch processing
+  batch:
+    enabled: true
+    schedule: "0 6 * * *"  # Daily at 6 AM
+    retention_days: 30

@@ -1,0 +1,5 @@
+This file created to demo read file example
+first line
+second linethird line
+
+the empty line was above.
