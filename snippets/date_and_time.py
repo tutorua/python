@@ -15,3 +15,4 @@ SCREENSHOTS_DIR = PROJECT_ROOT / "screenshots" / timestamp
 print(SCREENSHOTS_DIR)
 if not SCREENSHOTS_DIR.exists():
     print("SCREENSHOTS_DIR.mkdir(parents=True, exist_ok=True)")
+    SCREENSHOTS_DIR.mkdir(parents=True, exist_ok=True)

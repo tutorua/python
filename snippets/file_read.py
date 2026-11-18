@@ -21,7 +21,7 @@ if path.is_file():
     print("Script for write test file was deleted")
 
 
-with open(file_name, "r") as file:
+with open(file_name, "r") as f:
 
     # data = file.read()
     # print(data)
@@ -29,18 +29,18 @@ with open(file_name, "r") as file:
     # print(lines)
     # line = file.readline(5) # stops reading after the first 5 symbols
     # print(line)
-    line = file.readline() # stops reading after the first line
+    line = f.readline() # stops reading after the first line
     print(line)
 
 
-with open("examplew.txt", "w") as file:
+with open("examplew.txt", "w") as f:
 
-    file.write("Hello, world!\n")
+    f.write("Hello, world!\n")
 
 
-with open("examplew.txt", "r") as file:
-    file.seek(10)  # move the pointer 10 bytes from the beginning
-    data = file.read()
+with open("examplew.txt", "r") as f:
+    f.seek(10)  # move the pointer 10 bytes from the beginning
+    data = f.read()
     print(data)
 
     
